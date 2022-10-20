@@ -1,8 +1,10 @@
 package ops
 
 import (
+	"bufio"
 	"fmt"
 	"os"
+	"strings"
 )
 
 func Create() {
@@ -34,6 +36,20 @@ func Add(str string) {
 	fmt.Printf("追加一行, 内容是: %v\n", str)
 }
 
-func Find(str string) {
-	fmt.Printf("检索一行, 检索条件：%v\n", str)
+func Find(subStr string) []string {
+	file, err := os.Open("./data/data.txt")
+	if err != nil {
+		fmt.Printf("读取文件出错, %v", err)
+	}
+	defer file.Close()
+	fileScanner := bufio.NewScanner(file)
+	var lines []string
+	for fileScanner.Scan() {
+		str := fileScanner.Text()
+		if strings.Contains(str, subStr) {
+			lines = append(lines, str)
+		}
+	}
+	fmt.Printf("检索条件：%v\n", subStr)
+	return lines
 }

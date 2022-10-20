@@ -22,17 +22,20 @@ func main() {
 		cmd = cmd[0 : len(cmd)-2]
 		cmds := strings.Split(cmd, " ")
 		op := cmds[0]
-		data := cmd[len(op)+1:]
-
+		data := ""
+		if len(cmds) > 1 {
+			data = cmd[len(op)+1:]
+		}
 		//fmt.Println(cmds)
 		switch op {
 		case "add":
 			ops.Add(data)
 			fmt.Println("添加一行数据成功")
 		case "rm":
-			fmt.Println("删除最后一行")
+			fmt.Println("待实现...")
 		case "find":
-			fmt.Println("检索一行内容")
+			find := ops.Find(data)
+			fmt.Println("检索结果", find)
 
 		}
 
