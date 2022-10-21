@@ -34,14 +34,14 @@ func OpenAppend() *os.File {
 /*
 删除最后一行，目前尚未实现
 */
-func Rm() {
+func RmData() {
 	fmt.Printf("删掉最后一行\n")
 }
 
 /*
 添加一行数据
 */
-func Add(str string) {
+func SetData(str string) {
 	file := OpenAppend()
 	defer file.Close()
 	file.WriteString(str + "\n")
@@ -51,7 +51,7 @@ func Add(str string) {
 /*
 检索一行数据
 */
-func Find(subStr string) []string {
+func GetData(subStr string) []string {
 	file, err := os.Open("./data/data.txt")
 	if err != nil {
 		fmt.Printf("读取文件出错, %v", err)

@@ -28,12 +28,12 @@ func main() {
 		//fmt.Println(cmds)
 		switch op {
 		case "add":
-			ops.Add(data)
+			ops.SetData(data)
 			fmt.Println("添加一行数据成功")
 		case "rm":
 			fmt.Println("待实现...")
 		case "find":
-			find := ops.Find(data)
+			find := ops.GetData(data)
 			fmt.Println("检索结果", find)
 
 		}
