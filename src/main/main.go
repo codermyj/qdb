@@ -6,7 +6,6 @@ import (
 	"os"
 	"qfs/src/ops"
 	"strings"
-	//"qfs/src/ops"
 )
 
 func main() {
@@ -40,8 +39,4 @@ func main() {
 		}
 
 	}
-	//ops.Add("aaaa")
-	//ops.Add("cccc")
-	//ops.Rm()
-	//ops.Find("bbb")
 }

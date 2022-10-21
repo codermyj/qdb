@@ -7,6 +7,9 @@ import (
 	"strings"
 )
 
+/*
+创建一个文件，目前未使用
+*/
 func Create() {
 	file, err := os.Create("./data/data.txt")
 	if err != nil {
@@ -17,6 +20,9 @@ func Create() {
 
 }
 
+/*
+以追加方式打开data/data.txt文件
+*/
 func OpenAppend() *os.File {
 	file, err := os.OpenFile("./data/data.txt", os.O_APPEND, 0666)
 	if err != nil {
@@ -25,10 +31,16 @@ func OpenAppend() *os.File {
 	return file
 }
 
+/*
+删除最后一行，目前尚未实现
+*/
 func Rm() {
 	fmt.Printf("删掉最后一行\n")
 }
 
+/*
+添加一行数据
+*/
 func Add(str string) {
 	file := OpenAppend()
 	defer file.Close()
@@ -36,6 +48,9 @@ func Add(str string) {
 	fmt.Printf("追加一行, 内容是: %v\n", str)
 }
 
+/*
+检索一行数据
+*/
 func Find(subStr string) []string {
 	file, err := os.Open("./data/data.txt")
 	if err != nil {
