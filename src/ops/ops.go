@@ -2,10 +2,18 @@ package ops
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"os"
 	"strings"
 )
+
+type Data struct {
+	KeySize   int    `json:"key_size"`
+	ValueSize int    `json:"value_size"`
+	Key       string `json:"key"`
+	Value     string `json:"value"`
+}
 
 /*
 创建一个文件，目前未使用
@@ -34,16 +42,20 @@ func OpenAppend() *os.File {
 /*
 删除最后一行，目前尚未实现
 */
-func RmData() {
+func RmData(data Data) {
+	data.Value = "HAS_BEEN_DELETED"
+	SetData(data)
 	fmt.Printf("删掉最后一行\n")
 }
 
 /*
 添加一行数据
 */
-func SetData(str string) {
+func SetData(data Data) {
 	file := OpenAppend()
 	defer file.Close()
+	marshal, _ := json.Marshal(data)
+	str := string(marshal)
 	file.WriteString(str + "\n")
 	fmt.Printf("追加一行, 内容是: %v\n", str)
 }
