@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"strings"
 )
 
 type Data struct {
@@ -63,20 +62,29 @@ func SetData(data Data) {
 /*
 检索一行数据
 */
-func GetData(subStr string) []string {
+
+func LoadData() map[string]string {
 	file, err := os.Open("./data/data.txt")
 	if err != nil {
 		fmt.Printf("读取文件出错, %v", err)
 	}
 	defer file.Close()
 	fileScanner := bufio.NewScanner(file)
-	var lines []string
+	//var lines []string
+	var data Data
+	m := make(map[string]string)
 	for fileScanner.Scan() {
 		str := fileScanner.Text()
-		if strings.Contains(str, subStr) {
-			lines = append(lines, str)
+		err = json.Unmarshal([]byte(str), &data)
+		if err != nil {
+			fmt.Printf("解析数据出错, %v", err)
 		}
+		m[data.Key] = data.Value
 	}
-	fmt.Printf("检索条件：%v\n", subStr)
-	return lines
+	//fmt.Printf("检索条件：%v\n", subStr)
+	return m
+}
+
+func GetData(subStr string, m map[string]string) string {
+	return m[subStr]
 }

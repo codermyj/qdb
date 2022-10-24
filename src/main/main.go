@@ -9,10 +9,11 @@ import (
 )
 
 func main() {
+	allData := ops.LoadData()
 	for {
 		var data ops.Data
 		reader := bufio.NewReader(os.Stdin)
-		fmt.Print("> ")
+		fmt.Print("qfs> ")
 		cmd, err := reader.ReadString('\n')
 		if err != nil {
 			fmt.Printf("发生错误, %v", err)
@@ -35,9 +36,9 @@ func main() {
 		case "rm":
 			ops.RmData(data)
 			fmt.Println("删除记录...")
-			//case "find":
-			//	find := ops.GetData(data)
-			//	fmt.Println("检索结果", find)
+		case "get":
+			find := ops.GetData(data.Key, allData)
+			fmt.Println("检索结果", find)
 		}
 	}
 }
