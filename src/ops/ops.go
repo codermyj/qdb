@@ -79,14 +79,20 @@ func LoadData() map[string]string {
 		str := fileScanner.Text()
 		err = json.Unmarshal([]byte(str), &data)
 		if err != nil {
-			fmt.Printf("解析数据出错, %v", err)
+			//fmt.Printf("解析数据出错, %v", err)
+			continue
 		}
-		m[data.Key] = data.Value
+		if data.Value != "HAS_BEEN_DELETED" {
+			m[data.Key] = data.Value
+		} else {
+			delete(m, data.Key)
+		}
 	}
 	//fmt.Printf("检索条件：%v\n", subStr)
 	return m
 }
 
-func GetData(subStr string, m map[string]string) string {
-	return m[subStr]
+func GetData(subStr string, m map[string]string) (string, bool) {
+	s, ok := m[subStr]
+	return s, ok
 }

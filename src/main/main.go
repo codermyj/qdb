@@ -37,8 +37,12 @@ func main() {
 			ops.RmData(data, allData)
 			fmt.Println("删除记录...")
 		case "get":
-			find := ops.GetData(data.Key, allData)
-			fmt.Println("检索结果", find)
+			find, ok := ops.GetData(data.Key, allData)
+			if ok == false {
+				fmt.Println("无记录")
+			} else {
+				fmt.Println("查询结果", find)
+			}
 		}
 	}
 }
