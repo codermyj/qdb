@@ -10,7 +10,7 @@
 > 3) rm key
 
 #### 2022-10-25
-> 实现服务形式启动，offline程序下为离线形式，tcp下为服务形式（即 server-client架构）
+> 实现服务形式启动，offline目录下为离线形式，tcp目录下为服务（server-client）形式
 
 
 
