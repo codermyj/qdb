@@ -1,11 +1,8 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"net"
-	"os"
-	"strings"
 )
 
 func main() {
@@ -38,9 +35,10 @@ func process(conn net.Conn) {
 		}
 		recvStr := string(buf[:n])
 		fmt.Println("服务端收到客户端发来的数据", recvStr)
-		inputReader := bufio.NewReader(os.Stdin)
-		s, _ := inputReader.ReadString('\n')
-		t := strings.Trim(s, "\r\n")
-		conn.Write([]byte(t))
+		//inputReader := bufio.NewReader(os.Stdin)
+		//s, _ := inputReader.ReadString('\n')
+		//t := strings.Trim(s, "\r\n")
+		rs := recvStr + " : server"
+		conn.Write([]byte(rs))
 	}
 }

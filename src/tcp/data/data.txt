@@ -1,0 +1,2 @@
+{"key_size":1,"value_size":2,"key":"a","value":"aa"}
+{"key_size":1,"value_size":2,"key":"a","value":"HAS_BEEN_DELETED"}

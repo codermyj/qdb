@@ -9,15 +9,17 @@ import (
 )
 
 func main() {
-	conn, err := net.Dial("tcp", "127.0.0.1:20000")
+	conn, err := net.Dial("tcp", "172.16.39.228:20000")
 	fmt.Printf("客户端: %T\n", conn)
 	if err != nil {
 		fmt.Println("err: ", err)
 		return
 	}
 	defer conn.Close()
+	//fmt.Print("qfs> ")
 	inputReader := bufio.NewReader(os.Stdin)
 	for {
+		fmt.Print("qfs> ")
 		input, _ := inputReader.ReadString('\n')
 		inputInfo := strings.Trim(input, "\r\n")
 		if strings.ToUpper(inputInfo) == "Q" {
