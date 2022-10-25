@@ -32,10 +32,10 @@ func main() {
 		switch op {
 		case "set":
 			ops.SetData(data, allData)
-			fmt.Println("添加一行数据成功")
+			fmt.Println("修改成功")
 		case "rm":
 			ops.RmData(data, allData)
-			fmt.Println("删除记录...")
+			fmt.Println("删除成功")
 		case "get":
 			find, ok := ops.GetData(data.Key, allData)
 			if ok == false {

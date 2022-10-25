@@ -45,7 +45,6 @@ func RmData(data Data, memData map[string]string) {
 	data.Value = "HAS_BEEN_DELETED"
 	SetData(data, memData)
 	delete(memData, data.Key)
-	fmt.Printf("删掉最后一行\n")
 }
 
 /*
@@ -58,7 +57,7 @@ func SetData(data Data, memData map[string]string) {
 	str := string(marshal)
 	file.WriteString(str + "\n")
 	memData[data.Key] = data.Value
-	fmt.Printf("修改成功，追加一行日志, 内容是: %v\n", str)
+	//fmt.Printf("修改成功，追加一行日志, 内容是: %v\n", str)
 }
 
 /*
