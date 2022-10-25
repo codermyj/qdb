@@ -39,24 +39,26 @@ func OpenAppend() *os.File {
 }
 
 /*
-删除最后一行，目前尚未实现
+删除最后一行，
 */
-func RmData(data Data) {
+func RmData(data Data, memData map[string]string) {
 	data.Value = "HAS_BEEN_DELETED"
-	SetData(data)
+	SetData(data, memData)
+	delete(memData, data.Key)
 	fmt.Printf("删掉最后一行\n")
 }
 
 /*
 添加一行数据
 */
-func SetData(data Data) {
+func SetData(data Data, memData map[string]string) {
 	file := OpenAppend()
 	defer file.Close()
 	marshal, _ := json.Marshal(data)
 	str := string(marshal)
 	file.WriteString(str + "\n")
-	fmt.Printf("追加一行, 内容是: %v\n", str)
+	memData[data.Key] = data.Value
+	fmt.Printf("修改成功，追加一行日志, 内容是: %v\n", str)
 }
 
 /*

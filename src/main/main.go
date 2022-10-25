@@ -31,10 +31,10 @@ func main() {
 
 		switch op {
 		case "set":
-			ops.SetData(data)
+			ops.SetData(data, allData)
 			fmt.Println("添加一行数据成功")
 		case "rm":
-			ops.RmData(data)
+			ops.RmData(data, allData)
 			fmt.Println("删除记录...")
 		case "get":
 			find := ops.GetData(data.Key, allData)
