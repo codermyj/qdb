@@ -8,8 +8,10 @@ import (
 )
 
 func main() {
+	config := getConfig()
 	allData := ops.LoadData()
-	listen, err := net.Listen("tcp", "127.0.0.1:9100")
+	addr := config["addr"] + ":" + config["port"]
+	listen, err := net.Listen("tcp", addr)
 	fmt.Printf("服务端: %T=======\n", listen)
 	if err != nil {
 		fmt.Println("监听失败，err: ", err)
