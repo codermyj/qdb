@@ -13,6 +13,7 @@ func main() {
 	addr := config["addr"] + ":" + config["port"]
 	listen, err := net.Listen("tcp", addr)
 	fmt.Printf("服务端: %T=======\n", listen)
+	fmt.Printf("#{ss}")
 	if err != nil {
 		fmt.Println("监听失败，err: ", err)
 		return
