@@ -33,13 +33,12 @@ func (t *TheData) valueSizeLen() int {
 	return len(strconv.Itoa(t.ValueSize))
 }
 
-//	func (t *TheData) valuePos() int {
-//		return t.tsLen() + t.keySizeLen() + t.valueSizeLen()
-//	}
-//
-// 数据排列：value key ts
 func (t *TheData) toString() string {
 	return t.Value + t.Key + strconv.Itoa(t.ValueSize) + strconv.Itoa(t.KeySize) + strconv.FormatInt(t.Ts, 10)
+}
+
+func (t *TheData) length() int {
+	return len(t.toString())
 }
 
 func main() {

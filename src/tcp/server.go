@@ -3,17 +3,17 @@ package main
 import (
 	"fmt"
 	"net"
-	"qfs/src/ops"
+	"qfs/src/api"
 	"strings"
+	"time"
 )
 
 func main() {
 	config := getConfig()
-	allData := ops.LoadData()
+	allData := api.LoadData()
 	addr := config["addr"] + ":" + config["port"]
 	listen, err := net.Listen("tcp", addr)
 	fmt.Printf("服务端: %T=======\n", listen)
-	fmt.Printf("#{ss}")
 	if err != nil {
 		fmt.Println("监听失败，err: ", err)
 		return
@@ -31,7 +31,7 @@ func main() {
 
 func process(conn net.Conn, allData map[string]string) {
 	defer conn.Close()
-	var data ops.Data
+	var data api.TheData
 	fmt.Printf("服务端：%T\n", conn)
 	for {
 		var buf [128]byte
@@ -45,6 +45,7 @@ func process(conn net.Conn, allData map[string]string) {
 
 		cmds := strings.Split(recvStr, " ")
 		op := cmds[0]
+		data.Ts = time.Now().UnixMilli()
 		data.Key = cmds[1]
 		data.KeySize = len(data.Key)
 		if len(cmds) > 2 {
@@ -56,15 +57,15 @@ func process(conn net.Conn, allData map[string]string) {
 
 		switch op {
 		case "set":
-			ops.SetData(data, allData)
+			api.SetData(data, allData)
 			//fmt.Println("修改成功")
 			res = "修改成功"
 		case "rm":
-			ops.RmData(data, allData)
+			api.RmData(data, allData)
 			//fmt.Println("删除成功")
 			res = "删除成功"
 		case "get":
-			find, ok := ops.GetData(data.Key, allData)
+			find, ok := api.GetData(data.Key, allData)
 			if ok == false {
 				//fmt.Println("无记录")
 				res = "无记录"

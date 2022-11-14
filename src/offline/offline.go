@@ -4,14 +4,15 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"qfs/src/ops"
+	"qfs/src/api"
 	"strings"
 )
 
 func main() {
-	allData := ops.LoadData()
+	allData := api.LoadData()
+	pos := 0
 	for {
-		var data ops.Data
+		var data api.TheData
 		reader := bufio.NewReader(os.Stdin)
 		fmt.Print("qfs> ")
 		cmd, err := reader.ReadString('\n')
@@ -31,18 +32,18 @@ func main() {
 
 		switch op {
 		case "set":
-			ops.SetData(data, allData)
+			api.SetData(data, allData, &pos)
 			fmt.Println("修改成功")
-		case "rm":
-			ops.RmData(data, allData)
-			fmt.Println("删除成功")
-		case "get":
-			find, ok := ops.GetData(data.Key, allData)
-			if ok == false {
-				fmt.Println("无记录")
-			} else {
-				fmt.Println("查询结果", find)
-			}
+			//case "rm":
+			//	api.RmData(data, allData)
+			//	fmt.Println("删除成功")
+			//case "get":
+			//	find, ok := api.GetData(data.Key, allData)
+			//	if ok == false {
+			//		fmt.Println("无记录")
+			//	} else {
+			//		fmt.Println("查询结果", find)
+			//	}
 		}
 	}
 }
