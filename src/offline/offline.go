@@ -9,8 +9,8 @@ import (
 )
 
 func main() {
-	allData := api.LoadData()
-	pos := 0
+	keyDir := api.LoadData()
+	var pos int64 = 0
 	for {
 		var data api.TheData
 		reader := bufio.NewReader(os.Stdin)
@@ -32,18 +32,18 @@ func main() {
 
 		switch op {
 		case "set":
-			api.SetData(data, allData, &pos)
+			api.SetData(data, keyDir, &pos)
 			fmt.Println("修改成功")
-			//case "rm":
-			//	api.RmData(data, allData)
-			//	fmt.Println("删除成功")
-			//case "get":
-			//	find, ok := api.GetData(data.Key, allData)
-			//	if ok == false {
-			//		fmt.Println("无记录")
-			//	} else {
-			//		fmt.Println("查询结果", find)
-			//	}
+		//case "rm":
+		//	api.RmData(data, allData)
+		//	fmt.Println("删除成功")
+		case "get":
+			find, ok := api.GetData(data.Key, keyDir)
+			if ok == false {
+				fmt.Println("无记录")
+			} else {
+				fmt.Println("查询结果", find)
+			}
 		}
 	}
 }

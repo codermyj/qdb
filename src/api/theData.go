@@ -12,8 +12,9 @@ type TheData struct {
 
 type KeyDir struct {
 	// FileNo string  文件编号(待实现)
-	ValuePos  int64 // 值在文件中的位置
-	ValueSize int   //值的长度
+	Key       string `json:"key"`
+	ValuePos  int64  `json:"value_pos"`  // 值在文件中的位置
+	ValueSize int    `json:"value_size"` //值的长度
 }
 
 func (t *TheData) tsLen() int {

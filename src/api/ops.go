@@ -1,6 +1,8 @@
 package api
 
 import (
+	"bufio"
+	"encoding/json"
 	"fmt"
 	"os"
 )
@@ -20,8 +22,8 @@ func Create() {
 // OpenAppend
 // 以追加方式打开一个文件
 // /*
-func OpenAppend() *os.File {
-	file, err := os.OpenFile("./data/data.txt", os.O_APPEND, 0666)
+func OpenAppend(path string) *os.File {
+	file, err := os.OpenFile(path, os.O_APPEND, 0666)
 	if err != nil {
 		fmt.Printf("文件打开失败, err: %v", err)
 	}
@@ -41,46 +43,57 @@ func OpenAppend() *os.File {
 // 更新一条数据
 // /*
 func SetData(data TheData, memData map[string]KeyDir, pos *int64) {
-	file := OpenAppend()
-	defer file.Close()
-	file.WriteString(data.toString())
-	memData[data.Key] = KeyDir{*pos, data.ValueSize}
+	dataFile := OpenAppend("./data/data.txt")
+	metaFile := OpenAppend("./data/meta.txt")
+	defer dataFile.Close()
+	defer metaFile.Close()
+	dataFile.WriteString(data.toString())
+	memData[data.Key] = KeyDir{data.Key, *pos, data.ValueSize}
 	*pos += int64(data.length())
+	meta, _ := json.Marshal(memData[data.Key])
+	metaFile.WriteString(string(meta) + "\n")
 }
 
 // LoadData
 // 启动时加载到内存的数据
-// /*
-//func LoadData() map[string]string {
-//	file, err := os.Open("./data/data.txt")
-//	if err != nil {
-//		fmt.Printf("读取文件出错, %v", err)
-//	}
-//	defer file.Close()
-//	fileScanner := bufio.NewScanner(file)
-//	//var lines []string
-//	var data Data
-//	m := make(map[string]string)
-//	for fileScanner.Scan() {
-//		str := fileScanner.Text()
-//		err = json.Unmarshal([]byte(str), &data)
-//		if err != nil {
-//			//fmt.Printf("解析数据出错, %v", err)
-//			continue
-//		}
-//		if data.Value != "HAS_BEEN_DELETED" {
-//			m[data.Key] = data.Value
-//		} else {
-//			delete(m, data.Key)
-//		}
-//	}
-//	//fmt.Printf("检索条件：%v\n", subStr)
-//	return m
-//}
+func LoadData() map[string]KeyDir {
+	file, err := os.Open("./data/meta.txt")
+	if err != nil {
+		fmt.Printf("读取文件出错, %v", err)
+	}
+	defer file.Close()
+	fileScanner := bufio.NewScanner(file)
+	//var lines []string
+	var dir KeyDir
+	meta := make(map[string]KeyDir)
+	for fileScanner.Scan() {
+		str := fileScanner.Text()
+		err = json.Unmarshal([]byte(str), &dir)
+		if err != nil {
+			//fmt.Printf("解析数据出错, %v", err)
+			continue
+		}
+		meta[dir.Key] = dir
+		//if meta.Value != "HAS_BEEN_DELETED" {
+		//	m[data.Key] = data.Value
+		//} else {
+		//	delete(m, data.Key)
+		//}
+	}
+	//fmt.Printf("检索条件：%v\n", subStr)
+	return meta
+}
 
 // GetData
 // 查询一条数据/*
-func GetData(subStr string, m map[string]KeyDir) (string, bool) {
-	s, ok := m[subStr]
-	return s, ok
+func GetData(key string, keyDir map[string]KeyDir) (string, bool) {
+	file := OpenAppend("./data/data.txt")
+	defer file.Close()
+	dir, ok := keyDir[key]
+	buf := make([]byte, dir.ValueSize)
+	_, err := file.ReadAt(buf, dir.ValuePos)
+	if err != nil {
+		fmt.Println("读取数据失败！")
+	}
+	return string(buf), ok
 }
