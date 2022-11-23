@@ -9,8 +9,9 @@ import (
 )
 
 func main() {
+	var pos int64 = 0
 	config := getConfig()
-	allData := api.LoadData()
+	keyDir := api.LoadData()
 	addr := config["addr"] + ":" + config["port"]
 	listen, err := net.Listen("tcp", addr)
 	fmt.Printf("服务端: %T=======\n", listen)
@@ -25,11 +26,11 @@ func main() {
 			fmt.Println("建立连接失败, err: ", err)
 			continue
 		}
-		go process(conn, allData)
+		go process(conn, keyDir, &pos)
 	}
 }
 
-func process(conn net.Conn, allData map[string]string) {
+func process(conn net.Conn, keyDir map[string]api.KeyDir, pos *int64) {
 	defer conn.Close()
 	var data api.TheData
 	fmt.Printf("服务端：%T\n", conn)
@@ -57,13 +58,13 @@ func process(conn net.Conn, allData map[string]string) {
 
 		switch op {
 		case "set":
-			api.SetData(data, allData)
+			api.SetData(data, keyDir, pos)
 			//fmt.Println("修改成功")
 			res = "修改成功"
-		case "rm":
-			api.RmData(data, allData)
-			//fmt.Println("删除成功")
-			res = "删除成功"
+		//case "rm":
+		//	api.RmData(data, allData)
+		//	//fmt.Println("删除成功")
+		//	res = "删除成功"
 		case "get":
 			find, ok := api.GetData(data.Key, allData)
 			if ok == false {
