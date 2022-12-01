@@ -66,7 +66,7 @@ func process(conn net.Conn, keyDir map[string]api.KeyDir, pos *int64) {
 		//	//fmt.Println("删除成功")
 		//	res = "删除成功"
 		case "get":
-			find, ok := api.GetData(data.Key, allData)
+			find, ok := api.GetData(data.Key, keyDir)
 			if ok == false {
 				//fmt.Println("无记录")
 				res = "无记录"
