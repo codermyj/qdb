@@ -132,5 +132,4 @@ func (s *SimplifiedBitcask) get(key string) (string, error) {
 }
 
 func (s *SimplifiedBitcask) put(key string, val string) {
-
 }
