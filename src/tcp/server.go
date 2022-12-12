@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"net"
-	"qfs/src/api"
+	api2 "qfs/src/old_bak/api"
 	"strings"
 	"time"
 )
@@ -11,7 +11,7 @@ import (
 func main() {
 	var pos int64 = 0
 	config := getConfig()
-	keyDir := api.LoadData()
+	keyDir := api2.LoadData()
 	addr := config["addr"] + ":" + config["port"]
 	listen, err := net.Listen("tcp", addr)
 	fmt.Printf("服务端: %T=======\n", listen)
@@ -30,9 +30,9 @@ func main() {
 	}
 }
 
-func process(conn net.Conn, keyDir map[string]api.KeyDir, pos *int64) {
+func process(conn net.Conn, keyDir map[string]api2.KeyDir, pos *int64) {
 	defer conn.Close()
-	var data api.TheData
+	var data api2.TheData
 	fmt.Printf("服务端：%T\n", conn)
 	for {
 		var buf [128]byte
@@ -58,7 +58,7 @@ func process(conn net.Conn, keyDir map[string]api.KeyDir, pos *int64) {
 
 		switch op {
 		case "set":
-			api.SetData(data, keyDir, pos)
+			api2.SetData(data, keyDir, pos)
 			//fmt.Println("修改成功")
 			res = "修改成功"
 		//case "rm":
@@ -66,7 +66,7 @@ func process(conn net.Conn, keyDir map[string]api.KeyDir, pos *int64) {
 		//	//fmt.Println("删除成功")
 		//	res = "删除成功"
 		case "get":
-			find, ok := api.GetData(data.Key, keyDir)
+			find, ok := api2.GetData(data.Key, keyDir)
 			if ok == false {
 				//fmt.Println("无记录")
 				res = "无记录"
