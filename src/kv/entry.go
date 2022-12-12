@@ -1,15 +1,18 @@
-package entry
+package kv
 
 import (
 	"encoding/binary"
 	"errors"
+	"fmt"
 	"github.com/duke-git/lancet/v2/convertor"
+	"io"
 	"os"
 	"strconv"
 )
 
 const USIZE_LEN = strconv.IntSize / 8
 const ENTRY_HEAD_LEN = USIZE_LEN*2 + 1
+const STORAGE_FILE_PREFIX = "qfs"
 
 const (
 	PUT = 1
@@ -40,7 +43,7 @@ func (entry *Entry) size() uint {
 // 对数据进行二进制编码
 func (entry *Entry) encode() []byte {
 
-	buf := make([]byte, entry.size())
+	buf := make([]byte, 0, entry.size())
 
 	bufKeyLen, _ := convertor.ToBytes(entry.KeyLen)
 	buf = append(buf, bufKeyLen...)
@@ -55,15 +58,24 @@ func (entry *Entry) encode() []byte {
 
 	buf = append(buf, []byte(entry.Value)...)
 
+	fmt.Println("encode之后：buf", buf)
+
 	return buf
 }
 
 // 对二进制数据进行Entry头部解码
 func decode(buf []byte) *Entry {
 
+	//测试
+	fmt.Println("测试内容buf：", buf)
 	KeyLen := uint(binary.BigEndian.Uint64(buf[0:USIZE_LEN]))
+	//测试
+	fmt.Println("测试内容KeyLen：", KeyLen)
 	ValueLen := uint(binary.BigEndian.Uint64(buf[USIZE_LEN : USIZE_LEN*2]))
-	Kind := uint(binary.BigEndian.Uint64(buf[USIZE_LEN*2 : USIZE_LEN*2+1]))
+	//测试
+	fmt.Println("测试内容ValueLen: ", ValueLen)
+	Kind := uint(buf[USIZE_LEN*2])
+	fmt.Println("测试内容Kind: ", Kind)
 	//Key := string(buf[USIZE_LEN*2+1 : USIZE_LEN*2+1+KeyLen])
 	//Value := string(buf[USIZE_LEN*2+1+KeyLen : USIZE_LEN*2+1+KeyLen+ValueLen])
 
@@ -78,10 +90,59 @@ type Storage interface {
 
 type SimplifiedBitcask struct {
 	dataPathBuf    string
-	reader         os.File
-	writer         os.File
+	reader         *os.File
+	writer         *os.File
 	index          map[string]uint64
 	pendingCompact uint64
+	pos            uint64
+}
+
+func OpenSimplifiedBitcask(path string) (*SimplifiedBitcask, error) {
+	dataPathBuf := path + STORAGE_FILE_PREFIX + ".data"
+	readOpen, err := os.Open(dataPathBuf)
+	if err != nil {
+		return &SimplifiedBitcask{}, err
+	}
+	reader := readOpen
+	writeOpen, err := os.OpenFile(dataPathBuf, os.O_RDWR|os.O_CREATE, 0755)
+	if err != nil {
+		return &SimplifiedBitcask{}, err
+	}
+	writer := writeOpen
+
+	instance := SimplifiedBitcask{
+		dataPathBuf,
+		reader,
+		writer,
+		make(map[string]uint64),
+		0,
+		0}
+	instance.loadIndex()
+	return &instance, nil
+}
+
+func (s *SimplifiedBitcask) loadIndex() error {
+	var offset uint64 = 0
+	for {
+		entry, err := s.readAt(offset)
+		if err != nil {
+			if err == io.EOF {
+				s.pos = offset
+				return nil
+			} else {
+				return err
+			}
+		} else {
+			if entry.Kind == DEL {
+				delete(s.index, entry.Key)
+				continue
+			}
+			size := uint64(entry.size())
+			s.index[entry.Key] = offset
+			offset += size
+		}
+	}
+
 }
 
 func (s *SimplifiedBitcask) read(key string) (*Entry, error) {
@@ -128,8 +189,42 @@ func (s *SimplifiedBitcask) readAt(offset uint64) (*Entry, error) {
 
 func (s *SimplifiedBitcask) get(key string) (string, error) {
 	entry, err := s.read(key)
+	if err != nil {
+		return "key not found", err
+	}
 	return entry.Value, err
 }
 
-func (s *SimplifiedBitcask) put(key string, val string) {
+func (s *SimplifiedBitcask) write(entry *Entry) error {
+	key := entry.Key
+	s.index[key] = s.pos
+	buf := entry.encode()
+	return s.writeData(buf)
+}
+
+func (s *SimplifiedBitcask) writeData(buf []byte) error {
+	//测试
+	fmt.Println("写入数据：", string(buf), buf)
+	n, err := s.writer.Write(buf)
+	if err != nil {
+		return err
+	}
+	s.pos += uint64(n)
+	return nil
+}
+
+func (s *SimplifiedBitcask) put(key string, val string) error {
+	entry := NewEntry(key, val, PUT)
+	return s.write(entry)
+}
+
+func (s *SimplifiedBitcask) remove(key string) error {
+	_, ok := s.index[key]
+	if ok {
+		entry := NewEntry(key, "", DEL)
+		s.write(entry)
+		delete(s.index, key)
+		return nil
+	}
+	return errors.New("key not found")
 }
