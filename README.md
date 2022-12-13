@@ -1,31 +1,15 @@
 # qfs
-#### 2022-10-24
-> 1、编译src下的main.go，得到名为main（linux）或者main.exe（windows下）的可执行文件。
+### qdb-1.0.0 接口说明：
+- 1. 接口程序位于src/bin目录下：
+    - 1. qdb.go：本地命令行访问
+    - 2. server.go： 运行go run server.go ip:port，启动一个服务监听ip的port端口
+    - 3. client.go： 运行go run client.go ip:port，启动一个客户端命令行，访问server所在的ip地址的port
+- 2. 命令行接口说明
+    - 1. set key value，设置key对应的value，并存储到磁盘
+    - 2. get key，从存储的值中获取key对应的value值
+    - 3. remove key，删除key
 
-> 2、在该文件同级目录下创建数据文件data/data.txt。
 
-> 3、执行可执行文件，在qfs> 命令行下即可进行如下操作：
-> 1) set key value
-> 2) get key
-> 3) rm key
-
-#### 2022-10-25
-> 实现服务形式启动，offline目录下为离线形式，tcp目录下为服务（server-client）形式
-
-#### 2022-11-17
-测试网络
-
-#### 2022-11-23
-底层存储重构后，开发网络层访问
-
-#### 2022-11-30
-基本开发完成，进行简单测试，修复错误等
-
-### 2022-12-12
-底层存储架构重写，基本开发完成，待办：
-- [ ] 修复bug
-- [ ] 完善功能，merge机制
-- [ ] 开发网络访问模块
 
 
 

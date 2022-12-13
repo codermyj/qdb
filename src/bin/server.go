@@ -3,14 +3,16 @@ package main
 import (
 	"fmt"
 	"net"
+	"os"
 	"qdb/src/commons"
 	"qdb/src/kv"
 	"strings"
 )
 
 func main() {
+	args := os.Args
 	kvStore, err := kv.OpenKvStore(commons.DATA_BASE_PATH)
-	server, err := net.Listen("tcp", "127.0.0.1:9000")
+	server, err := net.Listen("tcp", args[1])
 	if err != nil {
 		fmt.Println(err)
 	}
