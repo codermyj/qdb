@@ -4,11 +4,6 @@ type KvStore struct {
 	storage Storage
 }
 
-func GetDataPath(path string) string {
-	dataPathBuf := path + STORAGE_FILE_PREFIX + ".data"
-	return dataPathBuf
-}
-
 func OpenKvStore(path string) (*KvStore, error) {
 	storage, err := OpenSimplifiedBitcask(path)
 	if err != nil {

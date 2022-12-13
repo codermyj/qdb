@@ -4,24 +4,19 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"qfs/src/kv"
+	"qdb/src/commons"
+	"qdb/src/kv"
 	"strings"
 )
 
-const DATA_BASE_PATH = "./data/"
-
-func printPrompt() {
-	fmt.Printf("%v> ", kv.STORAGE_FILE_PREFIX)
-}
-
 func main() {
-	kvStore, err := kv.OpenKvStore(DATA_BASE_PATH)
+	kvStore, err := kv.OpenKvStore(commons.DATA_BASE_PATH)
 	if err != nil {
 		return
 	}
 	reader := bufio.NewReader(os.Stdin)
 	for {
-		printPrompt()
+		commons.PrintPrompt()
 		line, _, err := reader.ReadLine()
 		if err != nil {
 			fmt.Println(err)

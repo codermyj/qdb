@@ -12,7 +12,7 @@ import (
 
 const USIZE_LEN = strconv.IntSize / 8
 const ENTRY_HEAD_LEN = USIZE_LEN*2 + 1
-const STORAGE_FILE_PREFIX = "qfs"
+const STORAGE_FILE_PREFIX = "qdb"
 
 const (
 	PUT = 1
@@ -66,16 +66,12 @@ func (entry *Entry) encode() []byte {
 // 对二进制数据进行Entry头部解码
 func decode(buf []byte) *Entry {
 
-	//测试
-	fmt.Println("测试内容buf：", buf)
 	KeyLen := uint(binary.BigEndian.Uint64(buf[0:USIZE_LEN]))
-	//测试
-	fmt.Println("测试内容KeyLen：", KeyLen)
+
 	ValueLen := uint(binary.BigEndian.Uint64(buf[USIZE_LEN : USIZE_LEN*2]))
-	//测试
-	fmt.Println("测试内容ValueLen: ", ValueLen)
+
 	Kind := uint(buf[USIZE_LEN*2])
-	fmt.Println("测试内容Kind: ", Kind)
+
 	//Key := string(buf[USIZE_LEN*2+1 : USIZE_LEN*2+1+KeyLen])
 	//Value := string(buf[USIZE_LEN*2+1+KeyLen : USIZE_LEN*2+1+KeyLen+ValueLen])
 
@@ -199,12 +195,13 @@ func (s *SimplifiedBitcask) write(entry *Entry) error {
 	key := entry.Key
 	s.index[key] = s.pos
 	buf := entry.encode()
+	//打印日志
+	fmt.Println("写入数据文件内容：", entry)
 	return s.writeData(buf)
 }
 
 func (s *SimplifiedBitcask) writeData(buf []byte) error {
-	//测试
-	fmt.Println("写入数据：", string(buf), buf)
+
 	n, err := s.writer.Write(buf)
 	if err != nil {
 		return err
