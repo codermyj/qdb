@@ -225,3 +225,10 @@ func (s *SimplifiedBitcask) remove(key string) error {
 	}
 	return errors.New("key not found")
 }
+
+/*
+merge：合并清理过期数据，待实现
+*/
+func (s *SimplifiedBitcask) merge() error {
+	return nil
+}
