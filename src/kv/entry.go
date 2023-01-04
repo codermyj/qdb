@@ -230,5 +230,17 @@ func (s *SimplifiedBitcask) remove(key string) error {
 merge：合并清理过期数据，待实现
 */
 func (s *SimplifiedBitcask) merge() error {
-	return nil
+	var offset uint64 = 0
+	var validEntry []Entry
+	for {
+		entry, err := s.readAt(0)
+		if err != nil {
+			return err
+		}
+		if s.index[entry.Key] == offset && entry.Kind == PUT {
+			validEntry = append(validEntry, *entry)
+		}
+		offset += uint64(entry.size())
+
+	}
 }
