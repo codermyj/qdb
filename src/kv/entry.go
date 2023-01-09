@@ -8,6 +8,7 @@ import (
 	"io"
 	"os"
 	"strconv"
+	"strings"
 )
 
 const USIZE_LEN = strconv.IntSize / 8
@@ -227,7 +228,7 @@ func (s *SimplifiedBitcask) remove(key string) error {
 }
 
 /*
-merge：合并清理过期数据，待实现
+merge：合并清理过期数据
 */
 func (s *SimplifiedBitcask) merge() error {
 	var offset uint64 = 0
@@ -243,4 +244,11 @@ func (s *SimplifiedBitcask) merge() error {
 		offset += uint64(entry.size())
 
 	}
+	if len(validEntry) > 0 {
+		paths := strings.Split(s.dataPathBuf, "/")
+		pathLen := len(paths)
+		strings.Join(paths[:pathLen-1], "/") //待完善
+
+	}
+
 }
