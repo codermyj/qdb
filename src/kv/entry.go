@@ -248,7 +248,14 @@ func (s *SimplifiedBitcask) merge() error {
 		paths := strings.Split(s.dataPathBuf, "/")
 		pathLen := len(paths)
 		strings.Join(paths[:pathLen-1], "/") //待完善
+		mergeFile, err := os.Create("./data.merge")
+		if err != nil {
+			return err
+		}
+		mergeFile.Write([]byte{})
 
 	}
+
+	return nil
 
 }
